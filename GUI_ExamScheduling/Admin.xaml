@@ -246,20 +246,16 @@
                                         VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20,20,0,0"
                                         Foreground="Black" FontFamily="Times New Roman" FontSize="16">
                                     </Button>
-                                    <Button Name="btnXepLich" Content="Xếp lịch thi" Width="150" Height="30"
+                                    <Button Name="btnXoaKyThi" Content="Xóa kỳ thi" Width="150" Height="30"
                                         VerticalAlignment="Top" HorizontalAlignment="Left" Margin="200,20,0,0"
                                         Foreground="Black" FontFamily="Times New Roman" FontSize="16">
                                     </Button>
-                                    <Button Name="btnXoaKyThi" Content="Xóa kỳ thi" Width="150" Height="30"
-                                        VerticalAlignment="Top" HorizontalAlignment="Left" Margin="380,20,0,0"
-                                        Foreground="Black" FontFamily="Times New Roman" FontSize="16">
-                                    </Button>
-                                    <GroupBox Name="gbThongTinKyThi" Header="Thông tin kỳ thi" Width="960" Height="80"
+                                    <GroupBox Name="gbThongTinKyThi" Header="Thông tin kỳ thi" Width="960" Height="110"
                                         VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,60,0,0"
                                         Foreground="Black" FontFamily="Times New Roman" FontSize="16">
                                         <Grid>
                                             <Label Content="Năm học:" Margin="10,10,0,0"/>
-                                            <TextBox Name="txtNamHoc" Width="120"
+                                            <TextBox Name="txtNamHoc" Width="120" IsReadOnly="true"
                                                 VerticalAlignment="Top" HorizontalAlignment="Left" Margin="85,15,0,0"/>
                                             <Label Content="Học kỳ:" Margin="215,10,0,0"/>
                                             <ComboBox Name="cboHocKy" Width="120"
@@ -270,9 +266,18 @@
                                             <Label Content="Ngày kết thúc:" Margin="670,10,0,0"/>
                                             <DatePicker Name="dpNgayKetThuc" Width="150" SelectedDateFormat="Short"
                                                 VerticalAlignment="Top" HorizontalAlignment="Left" Margin="780,10,0,0"/>
+                                            <Label Content="Dữ liệu tham gia thi:" Margin="10,50,0,0"/>
+                                            <TextBox Name="txtExcelThamGiaThi" Width="240" IsReadOnly="True"
+                                                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="160,55,0,0"/>
+                                            <Button Name="btnChonFileExcel" Content="Chọn file" Width="100" Height="30"
+                                                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="415,50,0,0"/>
+                                            <Button Name="btnTaiFileExcel" Content="Tải file" Width="100" Height="30"
+                                                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="535,50,0,0"/>
+                                            <Button Name="btnXepLich" Content="Xếp lịch thi" Width="150" Height="30"
+                                                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="780,50,0,0"/>
                                         </Grid>
                                     </GroupBox>
-                                    <DataGrid Name="dgLichThi" Margin="0,150,5,0" SelectionMode="Single" ColumnWidth="*"
+                                    <DataGrid Name="dgLichThi" Margin="0,180,5,0" SelectionMode="Single" ColumnWidth="*"
                                         CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" IsReadOnly="true"
                                         Foreground="Black" FontFamily="Times New Roman" FontSize="16"/>
                                 </Grid>

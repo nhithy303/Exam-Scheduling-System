@@ -1,7 +1,10 @@
 ﻿using BLL;
 using DTO;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Data.OleDb;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -218,8 +221,10 @@ namespace GUI
         private void tciXepLichThi_Load()
         {
             KyThi kt = kt_bll.GetInfo();
+            // Check if there already exists KyThi in database 
             if (kt != null)
             {
+                // if yes then load info of that KyThi => can't create another KyThi until deleting current KyThi
                 btnTaoKyThiMoi.IsEnabled = false;
                 btnXoaKyThi.IsEnabled = true;
                 txtNamHoc.Text = kt.NamHoc;
@@ -233,14 +238,16 @@ namespace GUI
             }
             else
             {
+                // if not yet then allow to create new KyThi
                 btnTaoKyThiMoi.IsEnabled = true;
                 btnXoaKyThi.IsEnabled = false;
             }
-            txtNamHoc.IsReadOnly = true;
-            btnXepLich.IsEnabled = gbThongTinKyThi.IsEnabled = false;
+            gbThongTinKyThi.IsEnabled = false;
             btnTaoKyThiMoi.Click += btnTaoKyThiMoi_Click;
-            btnXepLich.Click += btnXepLich_Click;
             btnXoaKyThi.Click += btnXoaKyThi_Click;
+            btnChonFileExcel.Click += btnChonFileExcel_Click;
+            btnTaiFileExcel.Click += btnTaiFileExcel_Click;
+            btnXepLich.Click += btnXepLich_Click;
         }
 
         private void gbThongTinKyThi_Load()
@@ -260,6 +267,7 @@ namespace GUI
             cboHocKy.SelectedIndex = 0;
             dpNgayBatDau.DisplayDateStart = dpNgayKetThuc.DisplayDateStart = dt;
             dpNgayBatDau.SelectedDate = dpNgayKetThuc.SelectedDate = dt;
+            btnTaiFileExcel.IsEnabled = false;
         }
 
         private void gbThongTinKyThi_Clear()
@@ -268,6 +276,7 @@ namespace GUI
             cboHocKy.Items.Clear();
             dpNgayBatDau.SelectedDate = null;
             dpNgayKetThuc.SelectedDate = null;
+            txtExcelThamGiaThi.Clear();
         }
 
         private void dgLichThi_Load()
@@ -282,15 +291,61 @@ namespace GUI
             if (btnTaoKyThiMoi.Content.ToString() == "Tạo kỳ thi mới")
             {
                 btnTaoKyThiMoi.Content = "Hủy";
-                btnXepLich.IsEnabled = gbThongTinKyThi.IsEnabled = true;
+                gbThongTinKyThi.IsEnabled = true;
                 gbThongTinKyThi_Load();
             }
             else
             {
                 btnTaoKyThiMoi.Content = "Tạo kỳ thi mới";
-                btnXepLich.IsEnabled = gbThongTinKyThi.IsEnabled = false;
+                gbThongTinKyThi.IsEnabled = false;
                 gbThongTinKyThi_Clear();
             }
+        }
+
+        private void btnXoaKyThi_Click(object sender, EventArgs e)
+        {
+            // Delete ThamGiaThi(*), PhanBoPhongThi(*), MonThi(MaCa), CaThi(*), KyThi(*)
+            tgt_bll.Delete("");
+            pbpt_bll.Delete("");
+            mt_bll.Update("null", "");
+            ct_bll.Delete("");
+            kt_bll.Delete();
+
+            // Reload data
+            dgLichThi_Load();
+            tciDanhSachMonThi_Load();
+
+            // Reset controls
+            btnTaoKyThiMoi.IsEnabled = true;
+            btnXoaKyThi.IsEnabled = false;
+            gbThongTinKyThi_Clear();
+        }
+
+        private void btnChonFileExcel_Click(object sender, EventArgs e)
+        {
+            if (btnChonFileExcel.Content.ToString() == "Chọn file")
+            {
+                Microsoft.Win32.OpenFileDialog od = new Microsoft.Win32.OpenFileDialog();
+                od.Filter = "Excell|*.xls;*.xlsx;";
+                Nullable<bool> result = od.ShowDialog();
+                if (result.HasValue && result.Value)
+                {
+                    txtExcelThamGiaThi.Text = od.FileName;
+                    btnChonFileExcel.Content = "Xóa file";
+                    btnTaiFileExcel.IsEnabled = true;
+                }
+            }
+            else
+            {
+                txtExcelThamGiaThi.Clear();
+                btnChonFileExcel.Content = "Chọn file";
+                btnTaiFileExcel.IsEnabled = false;
+            }
+        }
+
+        private void btnTaiFileExcel_Click(object sender, EventArgs e)
+        {
+            
         }
 
         private void btnXepLich_Click(object sender, EventArgs e)
@@ -317,29 +372,15 @@ namespace GUI
             kt.NgayKetThuc = dpNgayKetThuc.SelectedDate.Value;
             kt_bll.Insert(kt);
 
-            btnTaoKyThiMoi.IsEnabled = btnXepLich.IsEnabled = gbThongTinKyThi.IsEnabled = false;
+            // Reset controls
+            btnTaoKyThiMoi.IsEnabled = gbThongTinKyThi.IsEnabled = false;
             btnTaoKyThiMoi.Content = "Tạo kỳ thi mới";
             btnXoaKyThi.IsEnabled = true;
 
             // Schedule exam
             new ExamSchedule().ScheduleExam();
-            dgLichThi_Load();
-            tciDanhSachMonThi_Load();
-        }
 
-        private void btnXoaKyThi_Click(object sender, EventArgs e)
-        {
-            btnTaoKyThiMoi.IsEnabled = true;
-            btnXoaKyThi.IsEnabled = false;
-            gbThongTinKyThi_Clear();
-
-            // Delete ThamGiaThi(*), PhanBoPhongThi(*), MonThi(MaCa), CaThi(*)
-            tgt_bll.Delete("");
-            pbpt_bll.Delete("");
-            mt_bll.Update("null", "");
-            ct_bll.Delete("");
-            kt_bll.Delete();
-
+            // Reload data
             dgLichThi_Load();
             tciDanhSachMonThi_Load();
         }
