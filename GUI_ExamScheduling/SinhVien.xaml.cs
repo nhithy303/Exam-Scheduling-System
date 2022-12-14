@@ -27,6 +27,7 @@ namespace GUI
         SinhVienBLL sv_bll = new SinhVienBLL();
         LichThiSVBLL ltsv_bll = new LichThiSVBLL();
         TaiKhoanBLL tk_bll = new TaiKhoanBLL();
+        KyThiBLL kt_bll = new KyThiBLL();
         public frmSinhVien(TaiKhoan tk)
         {
             InitializeComponent();
@@ -52,14 +53,69 @@ namespace GUI
         /// </summary>
         private void tciXemLichThi_Load()
         {
-            dgLichThiSV_Load();
+            gbThongTinKyThi_Load();
+            cbLocNgayThi.Checked += cbLocNgayThi_Checked;
+            cbLocNgayThi.Unchecked += cbLocNgayThi_Unchecked;
+            dpNgayThi.SelectedDateChanged += dpNgayThi_SelectedDateChanged;
+            dgLichThiSV_Load("");
+            if (dgLichThiSV.Items.Count > 0)
+            {
+                btnInLichThi.IsEnabled = true;
+            }
+            else
+            {
+                btnInLichThi.IsEnabled = false;
+            }
+            btnInLichThi.Click += btnInLichThi_Click;
         }
 
-        private void dgLichThiSV_Load()
+        private void gbThongTinKyThi_Load()
+        {
+            KyThi kt = kt_bll.GetInfo();
+            if (kt != null)
+            {
+                gbThongTinKyThi.IsEnabled = true;
+                txtNamHoc.Text = kt.NamHoc;
+                txtHocKy.Text = kt.HocKy.ToString();
+                dpNgayThi.DisplayDateStart = kt.NgayBatDau;
+                dpNgayThi.DisplayDateEnd = kt.NgayKetThuc;
+                cbLocNgayThi.IsChecked = dpNgayThi.IsEnabled = false;
+            }
+            else
+            {
+                gbThongTinKyThi.IsEnabled = false;
+            }
+        }
+        
+        private void cbLocNgayThi_Checked(object sender, EventArgs e)
+        {
+            dpNgayThi.IsEnabled = true;
+        }
+
+        private void cbLocNgayThi_Unchecked(object sender, EventArgs e)
+        {
+            dpNgayThi.IsEnabled = false;
+            dgLichThiSV_Load("");
+        }
+
+        private void dpNgayThi_SelectedDateChanged(object sender, EventArgs e)
+        {
+            if (dpNgayThi.SelectedDate.HasValue)
+            {
+                dgLichThiSV_Load(dpNgayThi.SelectedDate.Value.ToString("yyyy/MM/dd"));
+            }
+        }
+
+        private void dgLichThiSV_Load(string ngaythi)
         {
             dgLichThiSV.ItemsSource = null;
-            LichThiSV[] ltsv = ltsv_bll.GetList(sv.MSSV);
+            LichThiSV[] ltsv = ltsv_bll.GetList(sv.MSSV, ngaythi);
             dgLichThiSV.ItemsSource = ltsv;
+        }
+
+        private void btnInLichThi_Click(object sender, EventArgs e)
+        {
+            
         }
 
         /// <summary>

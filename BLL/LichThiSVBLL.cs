@@ -11,9 +11,9 @@ namespace BLL
     public class LichThiSVBLL
     {
         LichThiSVDAL ltsv_dal = new LichThiSVDAL();
-        public LichThiSV[] GetList(string mssv)
+        public LichThiSV[] GetList(string mssv, string ngaythi)
         {
-            return ltsv_dal.GetList(mssv);
+            return ltsv_dal.GetList(mssv, ngaythi);
         }
     }
 }

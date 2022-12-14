@@ -20,7 +20,7 @@ namespace DAL
             ltsv.BuoiThi = row["BuoiThi"].ToString();
             return ltsv;
         }
-        public LichThiSV[] GetList(string mssv)
+        public LichThiSV[] GetList(string mssv, string ngaythi)
         {
             LichThiSV[] list = null;
             DataTable table = null;
@@ -28,8 +28,12 @@ namespace DAL
             string query = "select mt.TenMon, tgt.MaPhong, ct.NgayThi, ct.BuoiThi"
                 + " from ThamGiaThi tgt inner join MonThi mt on tgt.MaMon = mt.MaMon"
                 + " inner join CaThi ct on mt.MaCa = ct.MaCa"
-                + " where tgt.MSSV = '" + mssv + "'"
-                + " order by ct.NgayThi, ct.BuoiThi desc";
+                + " where tgt.MSSV = '" + mssv + "'";
+            if (ngaythi != String.Empty)
+            {
+                query += " and ct.NgayThi = '" + ngaythi + "'";
+            }
+            query += " order by ct.NgayThi, ct.BuoiThi desc";
             table = da.ExecuteQuery(query);
             n = table.Rows.Count;
             if (n == 0)

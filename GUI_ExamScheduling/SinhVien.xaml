@@ -103,7 +103,25 @@
                                 </Label>
                                 <Grid Grid.Row="1">
                                     <Border Margin="0,0,5,0" Background="White" Opacity="0.5" CornerRadius="10"/>
-                                    <DataGrid Name="dgLichThiSV" Margin="0,10,5,0" SelectionMode="Single" ColumnWidth="*"
+                                    <GroupBox Name="gbThongTinKyThi" Header="Thông tin kỳ thi" Width="960" Height="70"
+                                        VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,10,0,0"
+                                        Foreground="Black" FontFamily="Times New Roman" FontSize="16">
+                                        <Grid>
+                                            <Label Content="Năm học:" Margin="10,10,0,0"/>
+                                            <TextBox Name="txtNamHoc" Width="120" IsReadOnly="true"
+                                                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="85,15,0,0"/>
+                                            <Label Content="Học kỳ:" Margin="215,10,0,0"/>
+                                            <TextBox Name="txtHocKy" Width="120" IsReadOnly="True"
+                                                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="280,13,0,0"/>
+                                            <CheckBox Name="cbLocNgayThi" Content="Xem lịch thi theo ngày"
+                                                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="420,15,0,0"/>
+                                            <DatePicker Name="dpNgayThi" Width="150" SelectedDateFormat="Short"
+                                                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="600,10,0,0"/>
+                                            <Button Name="btnInLichThi" Content="In lịch thi" Width="150" Height="30"
+                                                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="780,7,0,0"/>
+                                        </Grid>
+                                    </GroupBox>
+                                    <DataGrid Name="dgLichThiSV" Margin="0,100,5,0" SelectionMode="Single" ColumnWidth="*"
                                         CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" IsReadOnly="true"
                                         Foreground="Black" FontFamily="Times New Roman" FontSize="16"/>
                                 </Grid>
