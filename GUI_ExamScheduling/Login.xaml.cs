@@ -33,6 +33,7 @@ namespace GUI
 
         private void frmLogin_Load(object sender, EventArgs e)
         {
+            txtTenDangNhap.Focus();
             rdoAdmin.IsChecked = true;
         }
 
@@ -73,6 +74,7 @@ namespace GUI
             }
             txtTenDangNhap.Clear(); pwbMatKhau.Clear();
             this.Show();
+            txtTenDangNhap.Focus();
         }
 
         private void ShowError(string error)

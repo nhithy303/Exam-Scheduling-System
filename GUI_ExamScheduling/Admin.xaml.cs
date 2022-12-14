@@ -3,7 +3,7 @@ using DTO;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Data.OleDb;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -35,6 +35,7 @@ namespace GUI
         PhanBoPhongThiBLL pbpt_bll = new PhanBoPhongThiBLL();
         KyThiBLL kt_bll = new KyThiBLL();
         LichThiBLL lt_bll = new LichThiBLL();
+        ExcelFileBLL excel_bll = new ExcelFileBLL();
         public frmAdmin(TaiKhoan tk)
         {
             InitializeComponent();
@@ -246,7 +247,7 @@ namespace GUI
             btnTaoKyThiMoi.Click += btnTaoKyThiMoi_Click;
             btnXoaKyThi.Click += btnXoaKyThi_Click;
             btnChonFileExcel.Click += btnChonFileExcel_Click;
-            btnTaiFileExcel.Click += btnTaiFileExcel_Click;
+            btnImportFileExcelThamGiaThi.Click += btnTaiFileExcel_Click;
             btnXepLich.Click += btnXepLich_Click;
         }
 
@@ -267,7 +268,7 @@ namespace GUI
             cboHocKy.SelectedIndex = 0;
             dpNgayBatDau.DisplayDateStart = dpNgayKetThuc.DisplayDateStart = dt;
             dpNgayBatDau.SelectedDate = dpNgayKetThuc.SelectedDate = dt;
-            btnTaiFileExcel.IsEnabled = false;
+            btnImportFileExcelThamGiaThi.IsEnabled = false;
         }
 
         private void gbThongTinKyThi_Clear()
@@ -326,26 +327,35 @@ namespace GUI
             if (btnChonFileExcel.Content.ToString() == "Chọn file")
             {
                 Microsoft.Win32.OpenFileDialog od = new Microsoft.Win32.OpenFileDialog();
-                od.Filter = "Excell|*.xls;*.xlsx;";
+                od.Filter = "All Excel Files|*.xls;*.xlsx;";
                 Nullable<bool> result = od.ShowDialog();
                 if (result.HasValue && result.Value)
                 {
                     txtExcelThamGiaThi.Text = od.FileName;
                     btnChonFileExcel.Content = "Xóa file";
-                    btnTaiFileExcel.IsEnabled = true;
+                    btnImportFileExcelThamGiaThi.IsEnabled = true;
                 }
             }
             else
             {
                 txtExcelThamGiaThi.Clear();
                 btnChonFileExcel.Content = "Chọn file";
-                btnTaiFileExcel.IsEnabled = false;
+                btnImportFileExcelThamGiaThi.IsEnabled = false;
             }
         }
 
         private void btnTaiFileExcel_Click(object sender, EventArgs e)
         {
-            
+            if (excel_bll.Import(txtExcelThamGiaThi.Text, "ThamGiaThi"))
+            {
+                MessageBox.Show("Import file excel thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                txtExcelThamGiaThi.Clear();
+                btnImportFileExcelThamGiaThi.IsEnabled = false;
+            }
+            else
+            {
+                ShowError("Import file excel thất bại!");
+            }
         }
 
         private void btnXepLich_Click(object sender, EventArgs e)
@@ -353,8 +363,9 @@ namespace GUI
             // Check whether there is data in ThamGiaThi or not
             if (tgt_bll.GetList("") == null)
             {
-                ShowError("ThamGiaThi is empty!"); return;
                 // Ask to import excel file
+                ShowError("Dữ liệu tham gia thi hiện đang trống!\nVui lòng chọn file excel để nhập dữ liệu.");
+                return;
             }
 
             // Generate list of CaThi
