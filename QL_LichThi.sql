@@ -280,4 +280,11 @@ INSERT INTO ThamGiaThi(MSSV, MaMon) VALUES
 	('47.01.102.088','2211PHYS1408'),
 	('47.01.102.088','2211PHYS1409')
 
+select * from ThamGiaThi
 delete from ThamGiaThi
+select * from PhanBoPhongThi
+delete from PhanBoPhongThi
+select * from CaThi
+select * from MonThi
+select * from PhongThi
+select * from SinhVien

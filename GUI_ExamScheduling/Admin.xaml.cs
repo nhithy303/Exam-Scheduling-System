@@ -3,6 +3,7 @@ using DTO;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -67,6 +68,7 @@ namespace GUI
             dgSinhVien_Load();
             cboKhoa.SelectionChanged += cboKhoa_SelectionChanged;
             btnImportExcelSinhVien.Click += btnImportExcelSinhVien_Click;
+            btnExportExcelSinhVien.Click += btnExportExcelSinhVien_Click;
         }
 
         private void cboKhoa_Load()
@@ -109,7 +111,7 @@ namespace GUI
                 if (result == MessageBoxResult.Yes) { overwrite = true; }
                 if (excel_bll.Import(filepath, "SinhVien", overwrite))
                 {
-                    MessageBox.Show("Import file excel thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ShowMessage("Import file excel thành công!");
                     dgSinhVien_Load();
                 }
                 else
@@ -117,6 +119,12 @@ namespace GUI
                     ShowError("Import file excel thất bại!");
                 }
             }
+        }
+
+        private void btnExportExcelSinhVien_Click(object sender, EventArgs e)
+        {
+            List<string> column_name = new List<string> { "MSSV", "Họ", "Tên", "Ngày sinh", "Giới tính", "Khoa" };
+            ExportFileExcel(dgSinhVien, column_name);
         }
 
         /// <summary>
@@ -180,7 +188,7 @@ namespace GUI
                 if (result == MessageBoxResult.Yes) { overwrite = true; }
                 if (excel_bll.Import(filepath, "MonThi", overwrite))
                 {
-                    MessageBox.Show("Import file excel thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ShowMessage("Import file excel thành công!");
                     dgMonThi_Load();
                 }
                 else
@@ -419,7 +427,7 @@ namespace GUI
             if (result == MessageBoxResult.Yes) { overwrite = true; }
             if (excel_bll.Import(txtExcelThamGiaThi.Text, "ThamGiaThi", overwrite))
             {
-                MessageBox.Show("Import file excel thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                ShowMessage("Import file excel thành công!");
                 txtExcelThamGiaThi.Clear();
                 btnImportFileExcelThamGiaThi.IsEnabled = false;
             }
@@ -487,7 +495,7 @@ namespace GUI
                 case "wrong password":
                     ShowError("Sai mật khẩu!"); break;
                 default:
-                    MessageBox.Show("Đổi mật khẩu thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ShowMessage("Đổi mật khẩu thành công!");
                     txtMatKhauHienTai.Clear(); txtMatKhauMoi.Clear(); txtXacNhanMatKhauMoi.Clear(); break;
             }
         }
@@ -552,16 +560,59 @@ namespace GUI
             MessageBox.Show(error, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
+        private void ShowMessage(string message)
+        {
+            MessageBox.Show(message, "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
         private string ChooseFileExcel()
         {
-            Microsoft.Win32.OpenFileDialog od = new Microsoft.Win32.OpenFileDialog();
-            od.Filter = "All Excel Files|*.xls;*.xlsx;";
-            Nullable<bool> result = od.ShowDialog();
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = "All Excel Files|*.xls;*.xlsx;";
+            Nullable<bool> result = dialog.ShowDialog();
             if (result.HasValue && result.Value)
             {
-                return od.FileName;
+                return dialog.FileName;
             }
             return "";
+        }
+
+        private void ExportFileExcel(DataGrid dg, List<string> column_name)
+        {
+            Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.Title = "Xuất File Excel";
+            dialog.Filter = "Excel Files (*.xlsx)|*.xlsx";
+            Nullable<bool> result = dialog.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                if (excel_bll.Export(ToDataTable(dg, column_name), dialog.FileName))
+                {
+                    ShowMessage("Export file excel thành công!");
+                }
+                else
+                {
+                    ShowError("Export file excel thất bại!");
+                }
+            }
+        }
+
+        private DataTable ToDataTable(DataGrid dg, List<string> column_name)
+        {
+            DataTable table = new DataTable();
+            for (int i = 0; i < dg.Columns.Count; i++)
+            {
+                table.Columns.Add(column_name[i]);
+            }
+            for (int i = 0; i < dg.Items.Count; i++)
+            {
+                DataRow row = table.NewRow();
+                for (int j = 0; j < dg.Columns.Count; j++)
+                {
+                    //row[j] = dg.Items[j].ToString();
+                }
+                table.Rows.Add(row);
+            }
+            return table;
         }
     }
 }

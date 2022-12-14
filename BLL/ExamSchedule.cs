@@ -158,23 +158,26 @@ namespace BLL
             {
                 string mamon = listSubjects[i].MaMon;
                 tgt = tgt_bll.GetList("MaMon = '" + mamon + "'");
-                PhanBoPhongThi[] pbpt_mamon = pbpt_bll.GetList("MaMon = '" + mamon + "'");
-                int stt_phong = 0;
-                int succhua = pt_bll.GetList()[0].SucChua;
-                ThamGiaThi tgt_update = new ThamGiaThi();
-                tgt_update.MaMon = mamon;
-                int count = 0;
-                for (int j = 0; j < tgt.Length; j++)
+                if (tgt != null)
                 {
-                    tgt_update.MSSV = tgt[j].MSSV;
-                    if (count > succhua)
+                    PhanBoPhongThi[] pbpt_mamon = pbpt_bll.GetList("MaMon = '" + mamon + "'");
+                    int stt_phong = 0;
+                    int succhua = pt_bll.GetList()[0].SucChua;
+                    ThamGiaThi tgt_update = new ThamGiaThi();
+                    tgt_update.MaMon = mamon;
+                    int count = 0;
+                    for (int j = 0; j < tgt.Length; j++)
                     {
-                        count = 0;
-                        stt_phong++;
+                        tgt_update.MSSV = tgt[j].MSSV;
+                        if (count > succhua)
+                        {
+                            count = 0;
+                            stt_phong++;
+                        }
+                        count++;
+                        tgt_update.MaPhong = pbpt_mamon[stt_phong].MaPhong;
+                        tgt_bll.Update(tgt_update);
                     }
-                    count++;
-                    tgt_update.MaPhong = pbpt_mamon[stt_phong].MaPhong;
-                    tgt_bll.Update(tgt_update);
                 }
             }
         }
