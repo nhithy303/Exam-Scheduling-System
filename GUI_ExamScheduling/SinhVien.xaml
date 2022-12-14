@@ -117,7 +117,7 @@
                                                 VerticalAlignment="Top" HorizontalAlignment="Left" Margin="420,15,0,0"/>
                                             <DatePicker Name="dpNgayThi" Width="150" SelectedDateFormat="Short"
                                                 VerticalAlignment="Top" HorizontalAlignment="Left" Margin="600,10,0,0"/>
-                                            <Button Name="btnInLichThi" Content="In lịch thi" Width="150" Height="30"
+                                            <Button Name="btnExportExcel" Content="Xuất excel lịch thi" Width="150" Height="30"
                                                 VerticalAlignment="Top" HorizontalAlignment="Left" Margin="780,7,0,0"/>
                                         </Grid>
                                     </GroupBox>

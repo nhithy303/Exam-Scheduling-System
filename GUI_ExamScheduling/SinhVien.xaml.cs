@@ -3,6 +3,7 @@ using DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,13 +61,13 @@ namespace GUI
             dgLichThiSV_Load("");
             if (dgLichThiSV.Items.Count > 0)
             {
-                btnInLichThi.IsEnabled = true;
+                btnExportExcel.IsEnabled = true;
             }
             else
             {
-                btnInLichThi.IsEnabled = false;
+                btnExportExcel.IsEnabled = false;
             }
-            btnInLichThi.Click += btnInLichThi_Click;
+            btnExportExcel.Click += btnExportExcel_Click;
         }
 
         private void gbThongTinKyThi_Load()
@@ -113,9 +114,52 @@ namespace GUI
             dgLichThiSV.ItemsSource = ltsv;
         }
 
-        private void btnInLichThi_Click(object sender, EventArgs e)
+        private void btnExportExcel_Click(object sender, EventArgs e)
         {
+            // Reload full data of exam schedule
+            dgLichThiSV_Load("");
+
+            // Convert DataGrid to DataTable
+            LichThiSV[] ltsv = (LichThiSV[])dgLichThiSV.ItemsSource;
+            DataTable table = new DataTable();
+            table.Columns.Add("Môn thi");
+            table.Columns.Add("Phòng thi");
+            table.Columns.Add("Ngày thi");
+            table.Columns.Add("Buổi thi");
+            for (int i = 0; i < ltsv.Length; i++)
+            {
+                DataRow row = table.NewRow();
+                row[0] = ltsv[i].MonThi;
+                row[1] = ltsv[i].PhongThi;
+                row[2] = ReverseDateFormat(ltsv[i].NgayThi);
+                row[3] = ltsv[i].BuoiThi;
+                table.Rows.Add(row);
+            }
             
+            // Export excel file
+            ExcelFileBLL excel_bll = new ExcelFileBLL();
+            Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.Title = "Xuất File Excel";
+            dialog.Filter = "Excel Files (*.xlsx)|*.xlsx";
+            Nullable<bool> result = dialog.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                if (excel_bll.Export(table, dialog.FileName))
+                {
+                    ShowMessage("Export file excel thành công!");
+                }
+                else
+                {
+                    ShowError("Export file excel thất bại!");
+                }
+            }
+            cbLocNgayThi.IsChecked = false;
+        }
+
+        private string ReverseDateFormat(string date)
+        {
+            string[] str = date.Split('/', '-');
+            return str[2] + "/" + str[1] + "/" + str[0];
         }
 
         /// <summary>
@@ -138,7 +182,7 @@ namespace GUI
                 case "wrong password":
                     ShowError("Sai mật khẩu!"); break;
                 default:
-                    MessageBox.Show("Đổi mật khẩu thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ShowMessage("Đổi mật khẩu thành công!");
                     txtMatKhauHienTai.Clear(); txtMatKhauMoi.Clear(); txtXacNhanMatKhauMoi.Clear(); break;
             }
         }
@@ -173,6 +217,11 @@ namespace GUI
         private void ShowError(string error)
         {
             MessageBox.Show(error, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void ShowMessage(string message)
+        {
+            MessageBox.Show(message, "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void btnDangXuat_Click(object sender, EventArgs e)
