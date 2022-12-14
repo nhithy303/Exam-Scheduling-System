@@ -52,7 +52,7 @@
                             Text="Tên đăng nhập" Margin="20,10,0,0"
                             VerticalAlignment="Top" HorizontalAlignment="Left"
                             Foreground="Black" FontFamily="Times New Roman" FontSize="14" FontWeight="Bold"/>
-                        <TextBox Name="txtTenDangNhap" TabIndex="0"
+                        <TextBox Name="txtTenDangNhap"
                             Width="290" Height="40" Margin="0,30,0,0"
                             VerticalAlignment="Top" HorizontalAlignment="Center"
                             Foreground="Black" FontFamily="Times New Roman" FontSize="14"
@@ -72,7 +72,7 @@
                             Text="Mật khẩu" Margin="20,80,0,0"
                             VerticalAlignment="Top" HorizontalAlignment="Left"
                             Foreground="Black" FontFamily="Times New Roman" FontSize="14" FontWeight="Bold"/>
-                        <PasswordBox Name="pwbMatKhau" TabIndex="1"
+                        <PasswordBox Name="pwbMatKhau"
                             Width="290" Height="40" Margin="0,100,0,0"
                             VerticalAlignment="Top" HorizontalAlignment="Center"
                             Foreground="Black" FontFamily="Times New Roman" FontSize="14"
@@ -88,15 +88,15 @@
                             Width="290" Height="40" Margin="0,100,0,0"
                             VerticalAlignment="Top" HorizontalAlignment="Center"
                             BorderBrush="Black" BorderThickness="1.2,1.2,1.2,1.2" CornerRadius="5"/>
-                        <RadioButton Name="rdoAdmin" TabIndex="2"
+                        <RadioButton Name="rdoAdmin"
                             Content="Admin" Margin="60,150,0,0"
                             VerticalAlignment="Top" HorizontalAlignment="Left"
                             Foreground="Black" FontFamily="Times New Roman" FontSize="14" FontWeight="Bold"/>
-                        <RadioButton Name="rdoSinhVien" TabIndex="3"
+                        <RadioButton Name="rdoSinhVien"
                             Content="Sinh viên" Margin="160,150,0,0"
                             VerticalAlignment="Top" HorizontalAlignment="Left"
                             Foreground="Black" FontFamily="Times New Roman" FontSize="14" FontWeight="Bold"/>
-                        <Button Name="btnDangNhap" TabIndex="4"
+                        <Button Name="btnDangNhap"
                             Content="Đăng nhập"
                             Width="305" Height="25" Margin="0,180,0,0"
                             VerticalAlignment="Top" HorizontalAlignment="Center"
@@ -108,7 +108,7 @@
                                 </LinearGradientBrush>
                             </Button.Background>
                         </Button>
-                        <Button Name="btnThoat" TabIndex="5"
+                        <Button Name="btnThoat"
                             Content="Thoát"
                             Width="305" Height="25" Margin="0,210,0,0"
                             VerticalAlignment="Top" HorizontalAlignment="Center"

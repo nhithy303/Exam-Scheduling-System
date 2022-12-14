@@ -146,7 +146,7 @@
                                     <ComboBox Name="cboKhoa" Margin="110,10,0,0"
                                         HorizontalAlignment="Left" VerticalAlignment="Top" Width="250"
                                         Foreground="Black" FontFamily="Times New Roman" FontSize="16"/>
-                                    <DataGrid Name="dgSinhVien" Margin="0,40,5,0" SelectionMode="Single" ColumnWidth="*"
+                                    <DataGrid Name="dgSinhVien" Margin="0,40,5,0" SelectionMode="Extended" ColumnWidth="*"
                                         CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" IsReadOnly="true"
                                         Foreground="Black" FontFamily="Times New Roman" FontSize="16"/>
                                     <Button Name="btnImportExcelSinhVien" Content="Import Excel" Width="130" Height="30"
@@ -250,6 +250,9 @@
                                         VerticalAlignment="Top" HorizontalAlignment="Left" Margin="200,20,0,0"
                                         Foreground="Black" FontFamily="Times New Roman" FontSize="16">
                                     </Button>
+                                    <Button Name="btnInLichThi" Content="In lịch thi" Width="150" Height="30"
+                                        VerticalAlignment="Top" HorizontalAlignment="Left" Margin="380,20,0,0"
+                                        Foreground="Black" FontFamily="Times New Roman" FontSize="16"/>
                                     <GroupBox Name="gbThongTinKyThi" Header="Thông tin kỳ thi" Width="960" Height="110"
                                         VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,60,0,0"
                                         Foreground="Black" FontFamily="Times New Roman" FontSize="16">

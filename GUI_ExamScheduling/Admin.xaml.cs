@@ -123,8 +123,24 @@ namespace GUI
 
         private void btnExportExcelSinhVien_Click(object sender, EventArgs e)
         {
-            List<string> column_name = new List<string> { "MSSV", "Họ", "Tên", "Ngày sinh", "Giới tính", "Khoa" };
-            ExportFileExcel(dgSinhVien, column_name);
+            SinhVien[] sv = (SinhVien[])dgSinhVien.ItemsSource;
+            DataTable table = new DataTable();
+            for (int i = 0; i < dgSinhVien.Columns.Count; i++)
+            {
+                table.Columns.Add(dgSinhVien.Columns[i].Header.ToString());
+            }
+            for (int i = 0; i < sv.Length; i++)
+            {
+                DataRow row = table.NewRow();
+                row[0] = sv[i].MSSV;
+                row[1] = sv[i].HoSV;
+                row[2] = sv[i].TenSV;
+                row[3] = ReverseDateFormat(sv[i].NgaySinh.ToString());
+                row[4] = sv[i].GioiTinh;
+                row[5] = sv[i].MaKhoa;
+                table.Rows.Add(row);
+            }
+            ExportFileExcel(table);
         }
 
         /// <summary>
@@ -136,6 +152,7 @@ namespace GUI
             dgMonThi_Load();
             cboCaThi.SelectionChanged += cboCaThi_SelectionChanged;
             btnImportExcelMonThi.Click += btnImportExcelMonThi_Click;
+            btnExportExcelMonThi.Click += btnExportExcelMonThi_Click;
         }
 
         private void cboCaThi_Load()
@@ -196,6 +213,27 @@ namespace GUI
                     ShowError("Import file excel thất bại!");
                 }
             }
+        }
+
+        private void btnExportExcelMonThi_Click(object sender, EventArgs e)
+        {
+            MonThi[] mt = (MonThi[])dgMonThi.ItemsSource;
+            DataTable table = new DataTable();
+            for (int i = 0; i < dgMonThi.Columns.Count; i++)
+            {
+                table.Columns.Add(dgMonThi.Columns[i].Header.ToString());
+            }
+            for (int i = 0; i < mt.Length; i++)
+            {
+                DataRow row = table.NewRow();
+                row[0] = mt[i].MaMon;
+                row[1] = mt[i].TenMon;
+                row[2] = mt[i].SoLuongSV;
+                row[3] = mt[i].SoPhong;
+                row[4] = mt[i].MaCa;
+                table.Rows.Add(row);
+            }
+            ExportFileExcel(table);
         }
 
         /// <summary>
@@ -280,7 +318,7 @@ namespace GUI
             {
                 // if yes then load info of that KyThi => can't create another KyThi until deleting current KyThi
                 btnTaoKyThiMoi.IsEnabled = false;
-                btnXoaKyThi.IsEnabled = true;
+                btnXoaKyThi.IsEnabled = btnInLichThi.IsEnabled = true;
                 txtNamHoc.Text = kt.NamHoc;
                 cboHocKy.Items.Add("Học kỳ 1");
                 cboHocKy.Items.Add("Học kỳ 2");
@@ -294,7 +332,7 @@ namespace GUI
             {
                 // if not yet then allow to create new KyThi
                 btnTaoKyThiMoi.IsEnabled = true;
-                btnXoaKyThi.IsEnabled = false;
+                btnXoaKyThi.IsEnabled = btnInLichThi.IsEnabled = false;
             }
             gbThongTinKyThi.IsEnabled = false;
             btnTaoKyThiMoi.Click += btnTaoKyThiMoi_Click;
@@ -302,6 +340,7 @@ namespace GUI
             btnChonFileExcelThamGiaThi.Click += btnChonFileExcelThamGiaThi_Click;
             btnImportFileExcelThamGiaThi.Click += btnTaiFileExcelThamGiaThi_Click;
             btnXepLich.Click += btnXepLich_Click;
+            btnInLichThi.Click += btnInLichThi_Click;
         }
 
         private void gbThongTinKyThi_Load()
@@ -395,7 +434,7 @@ namespace GUI
 
             // Reset controls
             btnTaoKyThiMoi.IsEnabled = true;
-            btnXoaKyThi.IsEnabled = false;
+            btnXoaKyThi.IsEnabled = btnInLichThi.IsEnabled = false;
             gbThongTinKyThi_Clear();
         }
 
@@ -465,7 +504,7 @@ namespace GUI
             // Reset controls
             btnTaoKyThiMoi.IsEnabled = gbThongTinKyThi.IsEnabled = false;
             btnTaoKyThiMoi.Content = "Tạo kỳ thi mới";
-            btnXoaKyThi.IsEnabled = true;
+            btnXoaKyThi.IsEnabled = btnInLichThi.IsEnabled = true;
 
             // Schedule exam
             new ExamSchedule().ScheduleExam();
@@ -473,6 +512,27 @@ namespace GUI
             // Reload data
             dgLichThi_Load();
             tciDanhSachMonThi_Load();
+        }
+
+        private void btnInLichThi_Click(object sender, EventArgs e)
+        {
+            LichThi[] lt = (LichThi[])dgLichThi.ItemsSource;
+            DataTable table = new DataTable();
+            for (int i = 0; i < dgLichThi.Columns.Count; i++)
+            {
+                table.Columns.Add(dgLichThi.Columns[i].Header.ToString());
+            }
+            for (int i = 0; i < lt.Length; i++)
+            {
+                DataRow row = table.NewRow();
+                row[0] = lt[i].MaCa;
+                row[1] = ReverseDateFormat(lt[i].NgayThi.ToString());
+                row[2] = lt[i].BuoiThi;
+                row[3] = lt[i].MonThi;
+                row[4] = lt[i].PhongThi;
+                table.Rows.Add(row);
+            }
+            ExportFileExcel(table);
         }
 
         /// <summary>
@@ -577,7 +637,7 @@ namespace GUI
             return "";
         }
 
-        private void ExportFileExcel(DataGrid dg, List<string> column_name)
+        private void ExportFileExcel(DataTable table)
         {
             Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
             dialog.Title = "Xuất File Excel";
@@ -585,7 +645,7 @@ namespace GUI
             Nullable<bool> result = dialog.ShowDialog();
             if (result.HasValue && result.Value)
             {
-                if (excel_bll.Export(ToDataTable(dg, column_name), dialog.FileName))
+                if (excel_bll.Export(table, dialog.FileName))
                 {
                     ShowMessage("Export file excel thành công!");
                 }
@@ -596,23 +656,10 @@ namespace GUI
             }
         }
 
-        private DataTable ToDataTable(DataGrid dg, List<string> column_name)
+        private string ReverseDateFormat(string date)
         {
-            DataTable table = new DataTable();
-            for (int i = 0; i < dg.Columns.Count; i++)
-            {
-                table.Columns.Add(column_name[i]);
-            }
-            for (int i = 0; i < dg.Items.Count; i++)
-            {
-                DataRow row = table.NewRow();
-                for (int j = 0; j < dg.Columns.Count; j++)
-                {
-                    //row[j] = dg.Items[j].ToString();
-                }
-                table.Rows.Add(row);
-            }
-            return table;
+            string[] str = date.Split('/', '-');
+            return str[2] + "/" + str[1] + "/" + str[0];
         }
     }
 }
