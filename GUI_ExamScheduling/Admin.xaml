@@ -269,7 +269,7 @@
                                             <Label Content="Dữ liệu tham gia thi:" Margin="10,50,0,0"/>
                                             <TextBox Name="txtExcelThamGiaThi" Width="240" IsReadOnly="True"
                                                 VerticalAlignment="Top" HorizontalAlignment="Left" Margin="160,55,0,0"/>
-                                            <Button Name="btnChonFileExcel" Content="Chọn file" Width="100" Height="30"
+                                            <Button Name="btnChonFileExcelThamGiaThi" Content="Chọn file" Width="100" Height="30"
                                                 VerticalAlignment="Top" HorizontalAlignment="Left" Margin="415,50,0,0"/>
                                             <Button Name="btnImportFileExcelThamGiaThi" Content="Import file" Width="100" Height="30"
                                                 VerticalAlignment="Top" HorizontalAlignment="Left" Margin="535,50,0,0"/>

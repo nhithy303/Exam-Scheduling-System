@@ -280,3 +280,4 @@ INSERT INTO ThamGiaThi(MSSV, MaMon) VALUES
 	('47.01.102.088','2211PHYS1408'),
 	('47.01.102.088','2211PHYS1409')
 
+delete from ThamGiaThi

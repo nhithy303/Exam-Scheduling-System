@@ -11,9 +11,9 @@ namespace BLL
     public class ExcelFileBLL
     {
         ExcelFileDAL excel_dal = new ExcelFileDAL();
-        public bool Import(string filepath, string tablename)
+        public bool Import(string filepath, string tablename, bool overwrite)
         {
-            return excel_dal.Import(filepath, tablename);
+            return excel_dal.Import(filepath, tablename, overwrite);
         }
     }
 }

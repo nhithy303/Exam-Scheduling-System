@@ -66,6 +66,7 @@ namespace GUI
             cboKhoa_Load();
             dgSinhVien_Load();
             cboKhoa.SelectionChanged += cboKhoa_SelectionChanged;
+            btnImportExcelSinhVien.Click += btnImportExcelSinhVien_Click;
         }
 
         private void cboKhoa_Load()
@@ -97,6 +98,27 @@ namespace GUI
             }
         }
 
+        private void btnImportExcelSinhVien_Click(object sender, EventArgs e)
+        {
+            string filepath = ChooseFileExcel();
+            if (filepath != "")
+            {
+                bool overwrite = false;
+                MessageBoxResult result = MessageBox.Show("Bạn có muốn thay toàn bộ dữ liệu sinh viên đã có bằng dữ liệu trong file excel không?",
+                    "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes) { overwrite = true; }
+                if (excel_bll.Import(filepath, "SinhVien", overwrite))
+                {
+                    MessageBox.Show("Import file excel thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    dgSinhVien_Load();
+                }
+                else
+                {
+                    ShowError("Import file excel thất bại!");
+                }
+            }
+        }
+
         /// <summary>
         /// DANH SÁCH MÔN THI
         /// </summary>
@@ -105,7 +127,9 @@ namespace GUI
             cboCaThi_Load();
             dgMonThi_Load();
             cboCaThi.SelectionChanged += cboCaThi_SelectionChanged;
+            btnImportExcelMonThi.Click += btnImportExcelMonThi_Click;
         }
+
         private void cboCaThi_Load()
         {
             CaThi[] ct = ct_bll.GetList();
@@ -142,6 +166,27 @@ namespace GUI
             if (cboCaThi.SelectedItem != null)
             {
                 dgMonThi_Load();
+            }
+        }
+
+        private void btnImportExcelMonThi_Click(object sender, EventArgs e)
+        {
+            string filepath = ChooseFileExcel();
+            if (filepath != "")
+            {
+                bool overwrite = false;
+                MessageBoxResult result = MessageBox.Show("Bạn có muốn thay toàn bộ dữ liệu môn thi đã có bằng dữ liệu trong file excel không?",
+                    "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes) { overwrite = true; }
+                if (excel_bll.Import(filepath, "MonThi", overwrite))
+                {
+                    MessageBox.Show("Import file excel thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    dgMonThi_Load();
+                }
+                else
+                {
+                    ShowError("Import file excel thất bại!");
+                }
             }
         }
 
@@ -246,8 +291,8 @@ namespace GUI
             gbThongTinKyThi.IsEnabled = false;
             btnTaoKyThiMoi.Click += btnTaoKyThiMoi_Click;
             btnXoaKyThi.Click += btnXoaKyThi_Click;
-            btnChonFileExcel.Click += btnChonFileExcel_Click;
-            btnImportFileExcelThamGiaThi.Click += btnTaiFileExcel_Click;
+            btnChonFileExcelThamGiaThi.Click += btnChonFileExcelThamGiaThi_Click;
+            btnImportFileExcelThamGiaThi.Click += btnTaiFileExcelThamGiaThi_Click;
             btnXepLich.Click += btnXepLich_Click;
         }
 
@@ -291,6 +336,30 @@ namespace GUI
         {
             if (btnTaoKyThiMoi.Content.ToString() == "Tạo kỳ thi mới")
             {
+                // Check whether there already exists data of SinhVien, MonThi, PhongThi
+                bool lacking = false;
+                string lackinglist = "";
+                if (sv_bll.GetList("") == null)
+                {
+                    lacking = true;
+                    lackinglist += "sinh viên, ";
+                }
+                if (mt_bll.GetList("") == null)
+                {
+                    lacking = true;
+                    lackinglist += "môn thi, ";
+                }
+                if (pt_bll.GetList() == null)
+                {
+                    lacking = true;
+                    lackinglist += "phòng thi, ";
+                }
+                if (lacking)
+                {
+                    ShowError("Thông tin " + lackinglist.Substring(0, lackinglist.Length - 2) + " còn trống!");
+                    return;
+                }
+
                 btnTaoKyThiMoi.Content = "Hủy";
                 gbThongTinKyThi.IsEnabled = true;
                 gbThongTinKyThi_Load();
@@ -322,31 +391,33 @@ namespace GUI
             gbThongTinKyThi_Clear();
         }
 
-        private void btnChonFileExcel_Click(object sender, EventArgs e)
+        private void btnChonFileExcelThamGiaThi_Click(object sender, EventArgs e)
         {
-            if (btnChonFileExcel.Content.ToString() == "Chọn file")
+            if (btnChonFileExcelThamGiaThi.Content.ToString() == "Chọn file")
             {
-                Microsoft.Win32.OpenFileDialog od = new Microsoft.Win32.OpenFileDialog();
-                od.Filter = "All Excel Files|*.xls;*.xlsx;";
-                Nullable<bool> result = od.ShowDialog();
-                if (result.HasValue && result.Value)
+                string filepath = ChooseFileExcel();
+                if (filepath != "")
                 {
-                    txtExcelThamGiaThi.Text = od.FileName;
-                    btnChonFileExcel.Content = "Xóa file";
+                    txtExcelThamGiaThi.Text = filepath;
+                    btnChonFileExcelThamGiaThi.Content = "Xóa file";
                     btnImportFileExcelThamGiaThi.IsEnabled = true;
                 }
             }
             else
             {
                 txtExcelThamGiaThi.Clear();
-                btnChonFileExcel.Content = "Chọn file";
+                btnChonFileExcelThamGiaThi.Content = "Chọn file";
                 btnImportFileExcelThamGiaThi.IsEnabled = false;
             }
         }
 
-        private void btnTaiFileExcel_Click(object sender, EventArgs e)
+        private void btnTaiFileExcelThamGiaThi_Click(object sender, EventArgs e)
         {
-            if (excel_bll.Import(txtExcelThamGiaThi.Text, "ThamGiaThi"))
+            bool overwrite = false;
+            MessageBoxResult result = MessageBox.Show("Bạn có muốn thay toàn bộ dữ liệu tham gia thi đã có bằng dữ liệu trong file excel không?",
+                "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes) { overwrite = true; }
+            if (excel_bll.Import(txtExcelThamGiaThi.Text, "ThamGiaThi", overwrite))
             {
                 MessageBox.Show("Import file excel thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                 txtExcelThamGiaThi.Clear();
@@ -468,14 +539,29 @@ namespace GUI
             btn.FontWeight = FontWeights.Bold;
         }
 
+        private void btnThoat_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        /// <summary>
+        /// SUPPORTING FUNCTIONS
+        /// </summary>
         private void ShowError(string error)
         {
             MessageBox.Show(error, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private void btnThoat_Click(object sender, EventArgs e)
+        private string ChooseFileExcel()
         {
-            this.Close();
+            Microsoft.Win32.OpenFileDialog od = new Microsoft.Win32.OpenFileDialog();
+            od.Filter = "All Excel Files|*.xls;*.xlsx;";
+            Nullable<bool> result = od.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                return od.FileName;
+            }
+            return "";
         }
     }
 }

@@ -11,7 +11,7 @@ namespace DAL
     public class ExcelFileDAL
     {
         DatabaseAccess da = new DatabaseAccess();
-        public bool Import(string filepath, string tablename)
+        public bool Import(string filepath, string tablename, bool overwrite)
         {
             try
             {
@@ -23,6 +23,10 @@ namespace DAL
                 DataTable table = new DataTable(tablename);
                 oleda.Fill(table);
                 olecon.Close();
+                if (overwrite)
+                {
+                    da.ExecuteNonQuery("delete from " + tablename);
+                }
                 return da.ExecuteBulkCopy(table);
             }
             catch
