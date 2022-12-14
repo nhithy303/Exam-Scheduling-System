@@ -2,6 +2,8 @@
 using DTO;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -29,6 +31,7 @@ namespace GUI
             this.Loaded += frmLogin_Load;
             btnDangNhap.Click += btnDangNhap_Click;
             btnThoat.Click += btnThoat_Click;
+            this.Closing += frmLogin_Closing;
         }
 
         private void frmLogin_Load(object sender, EventArgs e)
@@ -85,6 +88,13 @@ namespace GUI
         private void btnThoat_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void frmLogin_Closing(object sender, CancelEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Thoát",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            e.Cancel = (result == MessageBoxResult.No);
         }
     }
 }

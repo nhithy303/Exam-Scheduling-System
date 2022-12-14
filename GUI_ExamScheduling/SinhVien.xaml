@@ -73,8 +73,8 @@
                                         Stretch="Uniform" AlignmentX="Left"/>
                                 </Button.Background>
                             </Button>
-                            <Button Name="btnThoat"
-                                Content="Thoát"
+                            <Button Name="btnDangXuat"
+                                Content="Đăng xuất"
                                 Width="200" Height="30" Margin="0,90,0,0"
                                 VerticalAlignment="Top" HorizontalAlignment="Center"
                                 Foreground="Black" FontFamily="Times New Roman" FontSize="16"

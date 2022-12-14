@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -47,7 +48,8 @@ namespace GUI
             btnDsPhongThi.Click += btnDsPhongThi_Click;
             btnXepLichThi.Click += btnXepLichThi_Click;
             btnDoiMatKhau.Click += btnDoiMatKhau_Click;
-            btnThoat.Click += btnThoat_Click;
+            btnDangXuat.Click += btnDangXuat_Click;
+            this.Closing += frmAdmin_Closing;
         }
 
         private void frmAdmin_Load(object sender, EventArgs e)
@@ -288,12 +290,17 @@ namespace GUI
         {
             if (dgPhongThi.SelectedItem != null)
             {
-                PhongThi pt = (PhongThi)dgPhongThi.SelectedItem;
-                if (!pt_bll.Delete(pt))
+                MessageBoxResult result = MessageBox.Show("Bạn có chắc chắn muốn xóa phòng thi này không?", "Xóa phòng thi",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
                 {
-                    ShowError("Không thể xóa phòng thi này!"); return;
+                    PhongThi pt = (PhongThi)dgPhongThi.SelectedItem;
+                    if (!pt_bll.Delete(pt))
+                    {
+                        ShowError("Không thể xóa phòng thi này!"); return;
+                    }
+                    dgPhongThi_Load();
                 }
-                dgPhongThi_Load();
             }
         }
 
@@ -421,21 +428,26 @@ namespace GUI
 
         private void btnXoaKyThi_Click(object sender, EventArgs e)
         {
-            // Delete ThamGiaThi(*), PhanBoPhongThi(*), MonThi(MaCa), CaThi(*), KyThi(*)
-            tgt_bll.Delete("");
-            pbpt_bll.Delete("");
-            mt_bll.Update("null", "");
-            ct_bll.Delete("");
-            kt_bll.Delete();
+            MessageBoxResult result = MessageBox.Show("Bạn có chắc chắn muốn xóa kỳ thi hiện tại không?", "Xóa kỳ thi",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                // Delete ThamGiaThi(*), PhanBoPhongThi(*), MonThi(MaCa), CaThi(*), KyThi(*)
+                tgt_bll.Delete("");
+                pbpt_bll.Delete("");
+                mt_bll.Update("null", "");
+                ct_bll.Delete("");
+                kt_bll.Delete();
 
-            // Reload data
-            dgLichThi_Load();
-            tciDanhSachMonThi_Load();
+                // Reload data
+                dgLichThi_Load();
+                tciDanhSachMonThi_Load();
 
-            // Reset controls
-            btnTaoKyThiMoi.IsEnabled = true;
-            btnXoaKyThi.IsEnabled = btnInLichThi.IsEnabled = false;
-            gbThongTinKyThi_Clear();
+                // Reset controls
+                btnTaoKyThiMoi.IsEnabled = true;
+                btnXoaKyThi.IsEnabled = btnInLichThi.IsEnabled = false;
+                gbThongTinKyThi_Clear();
+            }
         }
 
         private void btnChonFileExcelThamGiaThi_Click(object sender, EventArgs e)
@@ -487,8 +499,8 @@ namespace GUI
             }
 
             // Generate list of CaThi
-            bool flag = ct_bll.Generate(dpNgayBatDau.SelectedDate.Value, dpNgayKetThuc.SelectedDate.Value);
-            if (!flag)
+            bool valid = ct_bll.Generate(dpNgayBatDau.SelectedDate.Value, dpNgayKetThuc.SelectedDate.Value);
+            if (!valid)
             {
                 ShowError("Thời gian kỳ thi không hợp lệ!"); return;
             }
@@ -507,11 +519,17 @@ namespace GUI
             btnXoaKyThi.IsEnabled = btnInLichThi.IsEnabled = true;
 
             // Schedule exam
-            new ExamSchedule().ScheduleExam();
-
-            // Reload data
-            dgLichThi_Load();
-            tciDanhSachMonThi_Load();
+            if (new ExamSchedule().ScheduleExam())
+            {
+                ShowMessage("Xếp lịch thi thành công!");
+                // Reload data
+                dgLichThi_Load();
+                tciDanhSachMonThi_Load();
+            }
+            else
+            {
+                ShowError("Xếp lịch thi thất bại!");
+            }
         }
 
         private void btnInLichThi_Click(object sender, EventArgs e)
@@ -607,9 +625,16 @@ namespace GUI
             btn.FontWeight = FontWeights.Bold;
         }
 
-        private void btnThoat_Click(object sender, EventArgs e)
+        private void btnDangXuat_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void frmAdmin_Closing(object sender, CancelEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất không?", "Thoát",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            e.Cancel = (result == MessageBoxResult.No);
         }
 
         /// <summary>

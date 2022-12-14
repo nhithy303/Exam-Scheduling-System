@@ -2,6 +2,7 @@
 using DTO;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,9 +32,10 @@ namespace GUI
             InitializeComponent();
             this.tk = tk;
             this.Loaded += frmSinhVien_Load;
-            btnThoat.Click += btnThoat_Click;
+            btnDangXuat.Click += btnDangXuat_Click;
             btnXemLichThi.Click += btnXemLichThi_Click;
             btnDoiMatKhau.Click += btnDoiMatKhau_Click;
+            this.Closing += frmSinhVien_Closing;
         }
 
         private void frmSinhVien_Load(object sender, EventArgs e)
@@ -117,9 +119,16 @@ namespace GUI
             MessageBox.Show(error, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private void btnThoat_Click(object sender, EventArgs e)
+        private void btnDangXuat_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void frmSinhVien_Closing(object sender, CancelEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất không?", "Thoát",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            e.Cancel = (result == MessageBoxResult.No);
         }
     }
 }
