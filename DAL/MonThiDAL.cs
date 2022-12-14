@@ -51,7 +51,7 @@ namespace DAL
                 mt.MaMon, mt.TenMon, mt.SoLuongSV, mt.SoPhong, mt.MaCa);
             da.ExecuteNonQuery(query);
         }
-        public void Update(string maca, string mamon)
+        public void UpdateMaCa(string maca, string mamon)
         {
             string query = "update MonThi set MaCa = ";
             if (maca == "null")
@@ -66,6 +66,11 @@ namespace DAL
             {
                 query += " where MaMon = '" + mamon + "'"; ;
             }
+            da.ExecuteNonQuery(query);
+        }
+        public void UpdateSoPhong(string succhua)
+        {
+            string query = "update MonThi set SoPhong = ceiling(SoLuongSV * 1.0 / " + succhua + ")";
             da.ExecuteNonQuery(query);
         }
     }

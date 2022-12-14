@@ -19,9 +19,13 @@ namespace BLL
         {
             mt_dal.Insert(mt);
         }
-        public void Update(string maca, string mamon)
+        public void UpdateMaCa(string maca, string mamon)
         {
-            mt_dal.Update(maca, mamon);
+            mt_dal.UpdateMaCa(maca, mamon);
+        }
+        public void UpdateSoPhong(string succhua)
+        {
+            mt_dal.UpdateSoPhong(succhua);
         }
     }
 }

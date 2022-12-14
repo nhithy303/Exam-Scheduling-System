@@ -310,6 +310,7 @@ namespace GUI
             {
                 ShowError("Sức chứa không hợp lệ"); return;
             }
+            mt_bll.UpdateSoPhong(txtSucChua.Text.Trim());
             txtSucChua.Clear();
             dgPhongThi_Load();
         }
@@ -435,7 +436,7 @@ namespace GUI
                 // Delete ThamGiaThi(*), PhanBoPhongThi(*), MonThi(MaCa), CaThi(*), KyThi(*)
                 tgt_bll.Delete("");
                 pbpt_bll.Delete("");
-                mt_bll.Update("null", "");
+                mt_bll.UpdateMaCa("null", "");
                 ct_bll.Delete("");
                 kt_bll.Delete();
 

@@ -131,7 +131,7 @@ namespace BLL
             for (int i = 0; i < noSubjects; i++)
             {
                 string maca = ct[listSubjects[i].timeslot - 1].MaCa;
-                mt_bll.Update(maca, listSubjects[i].MaMon);
+                mt_bll.UpdateMaCa(maca, listSubjects[i].MaMon);
             }
 
             // Insert into PhanBoPhongThi
