@@ -506,30 +506,32 @@ namespace GUI
                 ShowError("Thời gian kỳ thi không hợp lệ!"); return;
             }
 
-            // Insert into KyThi
-            KyThi kt = new KyThi();
-            kt.NamHoc = txtNamHoc.Text;
-            kt.HocKy = cboHocKy.SelectedIndex + 1;
-            kt.NgayBatDau = dpNgayBatDau.SelectedDate.Value;
-            kt.NgayKetThuc = dpNgayKetThuc.SelectedDate.Value;
-            kt_bll.Insert(kt);
-
-            // Reset controls
-            btnTaoKyThiMoi.IsEnabled = gbThongTinKyThi.IsEnabled = false;
-            btnTaoKyThiMoi.Content = "Tạo kỳ thi mới";
-            btnXoaKyThi.IsEnabled = btnInLichThi.IsEnabled = true;
-
             // Schedule exam
             if (new ExamSchedule().ScheduleExam())
             {
-                ShowMessage("Xếp lịch thi thành công!");
+                // Insert into KyThi
+                KyThi kt = new KyThi();
+                kt.NamHoc = txtNamHoc.Text;
+                kt.HocKy = cboHocKy.SelectedIndex + 1;
+                kt.NgayBatDau = dpNgayBatDau.SelectedDate.Value;
+                kt.NgayKetThuc = dpNgayKetThuc.SelectedDate.Value;
+                kt_bll.Insert(kt);
+
+                // Reset controls
+                btnTaoKyThiMoi.IsEnabled = gbThongTinKyThi.IsEnabled = false;
+                btnTaoKyThiMoi.Content = "Tạo kỳ thi mới";
+                btnXoaKyThi.IsEnabled = btnInLichThi.IsEnabled = true;
+
                 // Reload data
                 dgLichThi_Load();
                 tciDanhSachMonThi_Load();
+
+                ShowMessage("Xếp lịch thi thành công!");
             }
             else
             {
                 ShowError("Xếp lịch thi thất bại!");
+                ct_bll.Delete("");
             }
         }
 

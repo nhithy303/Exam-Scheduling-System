@@ -34,6 +34,10 @@ namespace BLL
             while (start <= end)
             {
                 CaThi ct = new CaThi();
+                if (start.DayOfWeek == DayOfWeek.Saturday || start.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    start = start.AddDays(1); continue;
+                }
                 ct.NgayThi = start;
                 ct.BuoiThi = (sang == true) ? "Sáng" : "Chiều";
                 ct.MaCa = ct.BuoiThi[0].ToString() + ct.NgayThi.Year.ToString() + ct.NgayThi.Month.ToString() + ct.NgayThi.Day.ToString();

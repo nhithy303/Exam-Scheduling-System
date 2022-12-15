@@ -3,6 +3,7 @@ using DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,46 +20,49 @@ namespace BLL
         PhongThi[] pt = null;
         PhongThiBLL pt_bll = new PhongThiBLL();
         PhanBoPhongThiBLL pbpt_bll = new PhanBoPhongThiBLL();
-        struct Subject
+        class Subject
         {
-            public string MaMon;
-            public int order;
-            public int degree;
-            public int timeslot;
-            public int rooms;
+            public string MaMon { get; set; }
+            public int order { get; set; }
+            public int degree { get; set; }
+            public int timeslot { get; set; }
+            public int rooms { get; set; }
         }
-        int noSubjects;         // Number of subjects
-        Subject[] listSubjects; // List of subjects
-        int[,] adjMatrix;       // Adjacency matrix (value = 0/1)
-        int noRooms;            // Number of available rooms
-        int chrNumber;          // Chromatic number
+        int noSubjects;             // Number of subjects
+        List<Subject> listSubjects; // List of subjects
+        int[,] adjMatrix;           // Adjacency matrix (value = 0/1)
+        int noRooms;                // Number of available rooms
+        List<bool> usedColor;       // List of color to assign exam timeslot
         private void LoadData()
         {
-            // Load data from database
+            // Load data of MonThi, PhongThi, CaThi from database
             mt = mt_bll.GetList("");
             pt = pt_bll.GetList();
             ct = ct_bll.GetList();
 
-            // Load data into necessary variable to assign exam schedule
+            // Set value for necessary variables
             noSubjects = mt.Length;
             noRooms = pt.Length;
-            chrNumber = 0;
-            listSubjects = new Subject[noSubjects];
+            usedColor = new List<bool>(1) { true };
+            listSubjects = new List<Subject>();
             for (int i = 0; i < mt.Length; i++)
             {
                 Subject s = new Subject();
                 s.MaMon = mt[i].MaMon; s.order = i; s.degree = 0; s.timeslot = 0; s.rooms = mt[i].SoPhong;
-                listSubjects[i] = s;
+                listSubjects.Add(s);
             }
+            
+            // Initialize adjacency matrix
             adjMatrix = new int[noSubjects, noSubjects];
+                // default value = 0
             for (int i = 0; i < noSubjects; i++)
             {
                 for (int j = 0; j < noSubjects; j++)
                 {
-                    // set 0 as default value of adjacency matrix
                     adjMatrix[i, j] = 0;
                 }
             }
+                // value = 1 if there exists at least one student taking those two subjects
             for (int i = 0; i < noSubjects - 1; i++)
             {
                 int deg = 0;
@@ -73,57 +77,121 @@ namespace BLL
                 listSubjects[i].degree = deg;
             }
         }
-        private void SortSubjects_DescDegree()
-        {
-            Array.Sort(listSubjects, (s1, s2) => s2.degree.CompareTo(s1.degree));
-        }
-        private void SortSubjects_AscTimeSlot()
-        {
-            Array.Sort(listSubjects, (s1, s2) => s1.timeslot.CompareTo(s2.timeslot));
-        }
         public bool ScheduleExam()
         {
             LoadData();
             SortSubjects_DescDegree();
-            List<Subject> coloredSubjects = new List<Subject>();
-            bool notAdjacent;
-            int assignedRooms = 0;
-            foreach (Subject s in listSubjects)
+            bool finished = false;
+            int count1 = -1, count2 = 0;
+            while (!finished)
             {
-                if (s.timeslot == 0)
+                finished = true;
+                if (count1 == count2) { break; }
+                count1 = count2; count2 = 0;
+                foreach (Subject s in listSubjects)
                 {
-                    chrNumber++;
-                    for (int i = 0; i < noSubjects; i++)
+                    if (s.timeslot == 0)
                     {
-                        if (listSubjects[i].timeslot == 0 && assignedRooms + listSubjects[i].rooms <= noRooms)
+                        finished = false;
+                        count2++;
+                        int countRooms = s.rooms;
+                        if (countRooms <= noRooms)
                         {
-                            notAdjacent = true;
-                            for (int j = 0; j < coloredSubjects.Count; j++)
+                            int currColor = GetColor(s);
+                            s.timeslot = currColor;
+                            List<Subject> coloredSubjects = new List<Subject>();
+                            coloredSubjects.Add(s);
+                            List<Subject> prevColorSubjects = listSubjects.FindAll(t => t.timeslot == currColor - 1);
+                            foreach (Subject s1 in listSubjects)
                             {
-                                if (adjMatrix[listSubjects[i].order, coloredSubjects[j].order] == 1)
+                                if (s1.timeslot == 0)
                                 {
-                                    notAdjacent = false; break;
+                                    //if (currColor % 2 == 0)
+                                    //{
+                                        if (IsAdjacency(s1, prevColorSubjects)) { continue; }
+                                    //}
+                                    if (!IsAdjacency(s1, coloredSubjects))
+                                    {
+                                        if (countRooms + s1.rooms <= noRooms)
+                                        {
+                                            coloredSubjects.Add(s1);
+                                            s1.timeslot = currColor;
+                                            countRooms += s1.rooms;
+                                        }
+                                    }
                                 }
                             }
-                            if (notAdjacent)
-                            {
-                                listSubjects[i].timeslot = chrNumber;
-                                coloredSubjects.Add(listSubjects[i]);
-                                assignedRooms += listSubjects[i].rooms;
-                            }
                         }
+                        else { return false; }
                     }
                 }
-                coloredSubjects.Clear();
-                assignedRooms = 0;
             }
-            if (chrNumber > ct.Length)
+            if (finished)
             {
-                return false;
+                // Exam period excesses what is assigned
+                if (usedColor.Count > ct.Length) { return false; }
+
+                // Successfully schedule exam
+                SortSubjects_AscTimeSlot();
+                UpdateDatabase();
             }
-            SortSubjects_AscTimeSlot();
-            UpdateDatabase();
-            return true;
+            return finished;
+        }
+
+        // Functions supporting to schedule exam
+        private void SortSubjects_DescDegree()
+        {
+            listSubjects.Sort((s1, s2) => s2.degree.CompareTo(s1.degree));
+        }
+        private void SortSubjects_AscTimeSlot()
+        {
+            listSubjects.Sort((s1, s2) => s1.timeslot.CompareTo(s2.timeslot));
+        }
+        private int GetColor(Subject s)
+        {
+            int color = 0;
+            List<int> index = new List<int>();
+            for (int i = 0; i < usedColor.Count; i++)
+            {
+                if (!usedColor[i]) { index.Add(i); }
+            }
+            if (index.Count == 0)
+            {
+                usedColor.Add(false);
+                index.Add(usedColor.Count - 1);
+            }
+            for (int i = 0; i < index.Count; i++)
+            {
+                color = index[i];
+                if (/*color % 2 != 0 || */ color == 1 || !usedColor[color - 1])
+                {
+                    usedColor[color] = true;
+                    return color;
+                }
+                List<Subject> prev_color = listSubjects.FindAll(t => t.timeslot == color - 1);
+                if (!IsAdjacency(s, prev_color))
+                {
+                    usedColor[color] = true;
+                    return color;
+                }
+                if (i + 1 == index.Count)
+                {
+                    usedColor.Add(false);
+                    index.Add(usedColor.Count - 1);
+                }
+            }
+            return color;
+        }
+        private bool IsAdjacency(Subject s, List<Subject> list)
+        {
+            foreach (Subject sbj in list)
+            {
+                if (adjMatrix[s.order, sbj.order] == 1)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         private void UpdateDatabase()
         {
@@ -135,20 +203,23 @@ namespace BLL
             }
 
             // Insert into PhanBoPhongThi
-            for (int i = 0; i < chrNumber; i++)
+            for (int i = 0; i < usedColor.Count; i++)
             {
                 MonThi[] mt_maca = mt_bll.GetList("MaCa = '" + ct[i].MaCa + "'");
-                int stt_phong = 0;
-                for (int j = 0; j < mt_maca.Length; j++)
+                if (mt_maca != null)
                 {
-                    int sophong = mt_maca[j].SoPhong;
-                    PhanBoPhongThi pbpt = new PhanBoPhongThi();
-                    pbpt.MaMon = mt_maca[j].MaMon;
-                    while (sophong > 0)
+                    int stt_phong = 0;
+                    for (int j = 0; j < mt_maca.Length; j++)
                     {
-                        pbpt.MaPhong = pt[stt_phong++].MaPhong;
-                        pbpt_bll.Insert(pbpt);
-                        sophong--;
+                        int sophong = mt_maca[j].SoPhong;
+                        PhanBoPhongThi pbpt = new PhanBoPhongThi();
+                        pbpt.MaMon = mt_maca[j].MaMon;
+                        while (sophong > 0)
+                        {
+                            pbpt.MaPhong = pt[stt_phong++].MaPhong;
+                            pbpt_bll.Insert(pbpt);
+                            sophong--;
+                        }
                     }
                 }
             }
