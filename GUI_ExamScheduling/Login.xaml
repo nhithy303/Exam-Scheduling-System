@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         WindowStyle="None" WindowStartupLocation="CenterScreen"
         AllowsTransparency="True" Background="Transparent"
-        Title="Login" Width="900" Height="450">
+        Title="Login" Width="900" Height="450" Icon="\Resources\AppIcon.ico">
     <Grid>
         <Border Name="BackBorder"
             Width="820" Height="330" Opacity="0.8"

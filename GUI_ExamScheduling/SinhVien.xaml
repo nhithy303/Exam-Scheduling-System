@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         WindowStyle="None" WindowStartupLocation="CenterScreen"
         AllowsTransparency="True" Background="Transparent"
-        Title="SinhVien" Width="1280" Height="720">
+        Title="SinhVien" Width="1280" Height="720" Icon="\Resources\AppIcon.ico">
     <Grid>
         <Border Name="BackBorder"
             Background="Gray" Opacity="0.3"

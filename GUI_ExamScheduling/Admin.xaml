@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         WindowStyle="None" WindowStartupLocation="CenterScreen"
         AllowsTransparency="True" Background="Transparent"
-        Title="Admin" Width="1280" Height="720">
+        Title="Admin" Width="1280" Height="720" Icon="\Resources\AppIcon.ico">
     <Grid>
         <Border Name="BackBorder"
             Background="Gray" Opacity="0.3"
