@@ -106,11 +106,7 @@ namespace BLL
                             {
                                 if (s1.timeslot == 0)
                                 {
-                                    //if (currColor % 2 == 0)
-                                    //{
-                                        if (IsAdjacency(s1, prevColorSubjects)) { continue; }
-                                    //}
-                                    if (!IsAdjacency(s1, coloredSubjects))
+                                    if (!IsAdjacency(s1, prevColorSubjects) && !IsAdjacency(s1, coloredSubjects))
                                     {
                                         if (countRooms + s1.rooms <= noRooms)
                                         {
@@ -120,7 +116,7 @@ namespace BLL
                                         }
                                     }
                                 }
-                            }
+                                }
                         }
                         else { return false; }
                     }
@@ -163,7 +159,7 @@ namespace BLL
             for (int i = 0; i < index.Count; i++)
             {
                 color = index[i];
-                if (/*color % 2 != 0 || */ color == 1 || !usedColor[color - 1])
+                if (color == 1 || !usedColor[color - 1])
                 {
                     usedColor[color] = true;
                     return color;
