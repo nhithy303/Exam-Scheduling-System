@@ -147,19 +147,19 @@ namespace BLL
         private int GetColor(Subject s)
         {
             int color = 0;
-            List<int> index = new List<int>();
+            List<int> colorIndex = new List<int>();
             for (int i = 0; i < usedColor.Count; i++)
             {
-                if (!usedColor[i]) { index.Add(i); }
+                if (!usedColor[i]) { colorIndex.Add(i); }
             }
-            if (index.Count == 0)
+            if (colorIndex.Count == 0)
             {
                 usedColor.Add(false);
-                index.Add(usedColor.Count - 1);
+                colorIndex.Add(usedColor.Count - 1);
             }
-            for (int i = 0; i < index.Count; i++)
+            for (int i = 0; i < colorIndex.Count; i++)
             {
-                color = index[i];
+                color = colorIndex[i];
                 if (color == 1 || !usedColor[color - 1])
                 {
                     usedColor[color] = true;
@@ -171,10 +171,10 @@ namespace BLL
                     usedColor[color] = true;
                     return color;
                 }
-                if (i + 1 == index.Count)
+                if (i + 1 == colorIndex.Count)
                 {
                     usedColor.Add(false);
-                    index.Add(usedColor.Count - 1);
+                    colorIndex.Add(usedColor.Count - 1);
                 }
             }
             return color;
