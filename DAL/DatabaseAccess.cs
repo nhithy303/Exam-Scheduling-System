@@ -16,10 +16,11 @@ namespace DAL
         private static SqlBulkCopy copy = null;
         public DatabaseAccess()
         {
-            string server_name = "LAPTOP-NL39PTHM\\MEI";
-            string conn_str = "Data Source=" + server_name + ";Initial Catalog=QL_LichThi;Integrated Security=True";
-            connection = new SqlConnection(conn_str);
-            copy = new SqlBulkCopy(conn_str);
+            //string server_name = "LAPTOP-NL39PTHM\\MEI";
+            //string conn_str = "Data Source=" + server_name + ";Initial Catalog=QL_LichThi;Integrated Security=True";
+            string str = "Data Source=192.168.1.89,1433;Network Library=DBMSSOCN;Initial Catalog=QL_LichThi;User ID=TRANHOANGYENNHI;Password=thynhi303";
+            connection = new SqlConnection(str);
+            copy = new SqlBulkCopy(str);
         }
 
         // Execute select query
