@@ -98,6 +98,7 @@ namespace BLL
                         if (countRooms <= noRooms)
                         {
                             int currColor = GetColor(s);
+                            if (currColor <= 0) { continue; }
                             s.timeslot = currColor;
                             List<Subject> coloredSubjects = new List<Subject>();
                             coloredSubjects.Add(s);
