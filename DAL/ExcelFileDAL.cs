@@ -11,12 +11,13 @@ namespace DAL
     public class ExcelFileDAL
     {
         DatabaseAccess da = new DatabaseAccess();
+        OleDbConnection olecon = null;
         public bool Import(string filepath, string tablename, bool overwrite)
         {
             try
             {
                 string s = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filepath + ";Extended Properties=Excel 12.0";
-                OleDbConnection olecon = new OleDbConnection(s);
+                olecon = new OleDbConnection(s);
                 olecon.Open();
                 string query = "select * from [sheet1$]";
                 OleDbDataAdapter oleda = new OleDbDataAdapter(query, olecon);
@@ -32,6 +33,25 @@ namespace DAL
             catch
             {
                 return false;
+            }
+        }
+        public DataTable ReadToDataTable(string filepath)
+        {
+            try
+            {
+                string s = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filepath + ";Extended Properties=Excel 12.0";
+                olecon = new OleDbConnection(s);
+                olecon.Open();
+                string query = "select * from [sheet1$]";
+                OleDbDataAdapter oleda = new OleDbDataAdapter(query, olecon);
+                DataTable table = new DataTable();
+                oleda.Fill(table);
+                olecon.Close();
+                return table;
+            }
+            catch
+            {
+                return null;
             }
         }
     }

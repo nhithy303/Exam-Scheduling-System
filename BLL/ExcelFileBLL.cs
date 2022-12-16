@@ -44,5 +44,9 @@ namespace BLL
                 return false;
             }
         }
+        public DataTable ReadToDataTable(string filepath)
+        {
+            return excel_dal.ReadToDataTable(filepath);
+        }
     }
 }

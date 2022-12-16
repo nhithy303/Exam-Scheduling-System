@@ -113,6 +113,14 @@ namespace GUI
                 if (result == MessageBoxResult.Yes) { overwrite = true; }
                 if (excel_bll.Import(filepath, "SinhVien", overwrite))
                 {
+                    // Insert into TaiKhoan
+                    DataTable table = new DataTable();
+                    table = excel_bll.ReadToDataTable(filepath);
+                    foreach (DataRow row in table.Rows)
+                    {
+                        tk_bll.Insert(row["MSSV"].ToString());
+                    }
+
                     ShowMessage("Import file excel thành công!");
                     dgSinhVien_Load();
                 }

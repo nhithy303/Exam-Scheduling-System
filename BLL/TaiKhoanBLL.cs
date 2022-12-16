@@ -45,5 +45,9 @@ namespace BLL
             tk_dal.Update(tk, matkhaumoi);
             return "success";
         }
+        public void Insert(string mssv)
+        {
+            tk_dal.Insert(mssv);
+        }
     }
 }
