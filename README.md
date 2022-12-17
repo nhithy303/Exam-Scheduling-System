@@ -1,2 +1,2 @@
 - Tạo database QL_LichThi
-- Vào Project DAL -> Class DatabaseAccess.cs -> Sửa server_name thành tên server của máy mình
+- Vào Project "DAL" -> Class "DatabaseAccess.cs" -> Sửa "server_name" thành tên SQL server của máy mình
