@@ -81,58 +81,50 @@ namespace BLL
         {
             LoadData();
             SortSubjects_DescDegree();
-            bool finished = false;
-            int count1 = -1, count2 = 0;
-            while (!finished)
+            int countAssignedSubjects = 0;  // to count if all of the subjects are assigned timeslot
+            foreach (Subject s in listSubjects)
             {
-                finished = true;
-                if (count1 == count2) { break; }
-                count1 = count2; count2 = 0;
-                foreach (Subject s in listSubjects)
+                if (s.timeslot == 0)
                 {
-                    if (s.timeslot == 0)
+                    int countRooms = s.rooms;
+                    if (countRooms <= noRooms)
                     {
-                        finished = false;
-                        count2++;
-                        int countRooms = s.rooms;
-                        if (countRooms <= noRooms)
+                        int currColor = GetColor(s);
+                        if (currColor <= 0) { continue; }
+                        s.timeslot = currColor; countAssignedSubjects++;
+                        List<Subject> coloredSubjects = new List<Subject>();
+                        coloredSubjects.Add(s);
+                        List<Subject> prevColorSubjects = listSubjects.FindAll(t => t.timeslot == currColor - 1);
+                        foreach (Subject s1 in listSubjects)
                         {
-                            int currColor = GetColor(s);
-                            if (currColor <= 0) { continue; }
-                            s.timeslot = currColor;
-                            List<Subject> coloredSubjects = new List<Subject>();
-                            coloredSubjects.Add(s);
-                            List<Subject> prevColorSubjects = listSubjects.FindAll(t => t.timeslot == currColor - 1);
-                            foreach (Subject s1 in listSubjects)
+                            if (s1.timeslot == 0)
                             {
-                                if (s1.timeslot == 0)
+                                if (!IsAdjacency(s1, prevColorSubjects) && !IsAdjacency(s1, coloredSubjects))
                                 {
-                                    if (!IsAdjacency(s1, prevColorSubjects) && !IsAdjacency(s1, coloredSubjects))
+                                    if (countRooms + s1.rooms <= noRooms)
                                     {
-                                        if (countRooms + s1.rooms <= noRooms)
-                                        {
-                                            coloredSubjects.Add(s1);
-                                            s1.timeslot = currColor;
-                                            countRooms += s1.rooms;
-                                        }
+                                        coloredSubjects.Add(s1);
+                                        s1.timeslot = currColor; countAssignedSubjects++;
+                                        countRooms += s1.rooms;
                                     }
                                 }
-                                }
+                            }
                         }
-                        else { return false; }
                     }
+                    else { return false; }
                 }
             }
-            if (finished)
-            {
-                // Exam period excesses what is assigned
-                if (usedColor.Count > ct.Length) { return false; }
 
-                // Successfully schedule exam
-                SortSubjects_AscTimeSlot();
-                UpdateDatabase();
-            }
-            return finished;
+            // Cannot assign timeslot for all of the subjects
+            if (countAssignedSubjects < listSubjects.Count) { return false; }
+
+            // Exam period excesses what is assigned
+            if (usedColor.Count > ct.Length) { return false; }
+
+            // Successfully schedule exam
+            SortSubjects_AscTimeSlot();
+            UpdateDatabase();
+            return true;
         }
 
         // Functions supporting to schedule exam
