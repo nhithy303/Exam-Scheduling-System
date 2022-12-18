@@ -17,7 +17,10 @@ namespace DAL
         {
             PhongThi pt = new PhongThi();
             pt.MaPhong = row["MaPhong"].ToString();
-            pt.SucChua = int.Parse(row["SucChua"].ToString());
+            if (row["SucChua"].ToString() != String.Empty)
+            {
+                pt.SucChua = int.Parse(row["SucChua"].ToString());
+            }
             return pt;
         }
         public PhongThi[] GetList()

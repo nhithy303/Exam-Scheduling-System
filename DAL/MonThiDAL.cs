@@ -16,8 +16,14 @@ namespace DAL
             MonThi mt = new MonThi();
             mt.MaMon = row["MaMon"].ToString();
             mt.TenMon = row["TenMon"].ToString();
-            mt.SoLuongSV = int.Parse(row["SoLuongSV"].ToString());
-            mt.SoPhong = int.Parse(row["SoPhong"].ToString());
+            if (row["SoLuongSV"].ToString() != String.Empty)
+            {
+                mt.SoLuongSV = int.Parse(row["SoLuongSV"].ToString());
+            }
+            if (row["SoPhong"].ToString() != String.Empty)
+            {
+                mt.SoPhong = int.Parse(row["SoPhong"].ToString());
+            }
             mt.MaCa = row["MaCa"].ToString();
             return mt;
         }
