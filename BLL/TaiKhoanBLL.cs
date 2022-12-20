@@ -49,5 +49,9 @@ namespace BLL
         {
             tk_dal.Insert(mssv);
         }
+        public void Delete()
+        {
+            tk_dal.Delete();
+        }
     }
 }

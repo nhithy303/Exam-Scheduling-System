@@ -45,6 +45,11 @@ namespace DAL
                 da.ExecuteNonQuery(query);
             }
         }
+        public void Delete()
+        {
+            string query = "delete from TaiKhoan where QuanTriVien <> 1";
+            da.ExecuteNonQuery(query);
+        }
         private bool CheckPrimaryKey(string mssv)
         {
             string query = String.Format("select * from TaiKhoan where TenDangNhap = '{0}'", mssv);

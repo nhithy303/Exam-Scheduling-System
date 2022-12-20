@@ -114,6 +114,7 @@ namespace GUI
                 if (excel_bll.Import(filepath, "SinhVien", overwrite))
                 {
                     // Insert into TaiKhoan
+                    if (overwrite) { tk_bll.Delete(); }
                     DataTable table = new DataTable();
                     table = excel_bll.ReadToDataTable(filepath);
                     foreach (DataRow row in table.Rows)
@@ -321,6 +322,7 @@ namespace GUI
             mt_bll.UpdateSoPhong(txtSucChua.Text.Trim());
             txtSucChua.Clear();
             dgPhongThi_Load();
+            dgMonThi_Load();
         }
 
         /// <summary>
