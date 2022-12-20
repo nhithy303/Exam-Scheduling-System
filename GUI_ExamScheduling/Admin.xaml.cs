@@ -489,6 +489,7 @@ namespace GUI
             {
                 ShowMessage("Import file excel thành công!");
                 txtExcelThamGiaThi.Clear();
+                btnChonFileExcelThamGiaThi.Content = "Chọn file";
                 btnImportFileExcelThamGiaThi.IsEnabled = false;
             }
             else
@@ -538,8 +539,8 @@ namespace GUI
             }
             else
             {
-                ShowError("Xếp lịch thi thất bại!");
                 ct_bll.Delete("");
+                ShowError("Xếp lịch thi thất bại!");
             }
         }
 

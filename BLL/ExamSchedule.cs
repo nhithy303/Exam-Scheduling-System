@@ -2,6 +2,7 @@
 using DTO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -94,12 +95,20 @@ namespace BLL
                         s.timeslot = currColor; countAssignedSubjects++;
                         List<Subject> coloredSubjects = new List<Subject>();
                         coloredSubjects.Add(s);
-                        List<Subject> prevColorSubjects = listSubjects.FindAll(t => t.timeslot == currColor - 1);
+                        List<Subject> adjColorSubjects = new List<Subject>();
+                        if (currColor - 1 > 0)
+                        {
+                            adjColorSubjects = listSubjects.FindAll(t => t.timeslot == currColor - 1);
+                        }
+                        if (currColor + 1 < usedColor.Count)
+                        {
+                            adjColorSubjects.AddRange(listSubjects.FindAll(t => t.timeslot == currColor + 1));
+                        }
                         foreach (Subject s1 in listSubjects)
                         {
                             if (s1.timeslot == 0)
                             {
-                                if (!IsAdjacency(s1, prevColorSubjects) && !IsAdjacency(s1, coloredSubjects))
+                                if (!IsAdjacency(s1, adjColorSubjects) && !IsAdjacency(s1, coloredSubjects))
                                 {
                                     if (countRooms + s1.rooms <= noRooms)
                                     {
@@ -157,8 +166,18 @@ namespace BLL
                     usedColor[color] = true;
                     return color;
                 }
-                List<Subject> prev_color = listSubjects.FindAll(t => t.timeslot == color - 1);
-                if (!IsAdjacency(s, prev_color))
+                List<Subject> adj_color = new List<Subject>();
+                // get previes index colored subjects
+                if (color - 1 > 0)
+                {
+                    adj_color = listSubjects.FindAll(t => t.timeslot == color - 1);
+                }
+                // get next index colored subjects
+                if (color + 1 < usedColor.Count)
+                {
+                    adj_color.AddRange(listSubjects.FindAll(t => t.timeslot == color + 1));
+                }
+                if (!IsAdjacency(s, adj_color))
                 {
                     usedColor[color] = true;
                     return color;

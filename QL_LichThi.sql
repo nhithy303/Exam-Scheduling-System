@@ -74,10 +74,27 @@ CREATE TABLE ThamGiaThi
 
 -- NHẬP DỮ LIỆU Khoa
 INSERT INTO Khoa VALUES
-	('COMP', N'Công nghệ thông tin'),
+	('COMP', N'Công nghệ Thông tin'),
+	('GEOG', N'Địa lý'),
+	('POLI', N'Giáo dục Chính trị'),
+	('SPEC', N'Giáo dục Đặc biệt'),
+	('EARC', N'Giáo dục Mầm non'),
+	('PHYL', N'Giáo dục Thể chất'),
+	('PRIM', N'Giáo dục Tiểu học'),
+	('CHEM', N'Hóa học'),
+	('EDUC', N'Khoa học Giáo dục'),
+	('HIST', N'Lịch sử'),
+	('LITR', N'Ngữ văn'),
+	('BIOL', N'Sinh học'),
+	('PSYC', N'Tâm lý học'),
+	('ENGL', N'Tiếng Anh'),
+	('KORE', N'Tiếng Hàn Quốc'),
+	('RUSS', N'Tiếng Nga'),
+	('JAPN', N'Tiếng Nhật'),
+	('FRAN', N'Tiếng Pháp'),
+	('CHIN', N'Tiếng Trung'),
 	('MATH', N'Toán - Tin học'),
-	('PHYS', N'Vật lý'),
-	('ENGL', N'Tiếng Anh')
+	('PHYS', N'Vật lý')
 
 -- NHẬP DỮ LIỆU SinhVien
 INSERT INTO SinhVien VALUES
@@ -140,7 +157,7 @@ UPDATE TaiKhoan SET QuanTriVien = 1 WHERE TenDangNhap = 'admin'
 -- NHẬP DỮ LIỆU MonThi
 INSERT INTO MonThi VALUES
 	('2211COMP1701',N'Lí thuyết đồ thị',150,6,null),
-	('2211COMP1016',N'Cấu trúc máy tính',125,5,null),
+	('2211COMP1016',N'Cấu trúc dữ liệu',125,5,null),
 	('2211COMP1011',N'Kiến trúc máy tính',150,6,null),
 	('2211MILI2703',N'Quân sự chung',250,10,null),
 	('2211ENGL2402',N'Tiếng Anh học phần II',275,11,null),
